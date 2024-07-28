@@ -6,9 +6,10 @@ export const BASE_URL = "http://localhost:9000";
 
 const App = () => {
   const [data, setData] = useState(null);
+  const[filterData, setFilterData]= useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [selectedBtn, setSelectedBtn] = useState("all");
 
   useEffect(() => {
     const fetchFoodData = async () => {
@@ -16,6 +17,7 @@ const App = () => {
         const response = await fetch(BASE_URL); 
         const json = await response.json();
         setData(json);
+        setFilterData(json);
         setLoading(false);
       } catch (error) {
 
@@ -28,46 +30,64 @@ const App = () => {
   fetchFoodData();
   }, []);
 
-// const temp=[
-//   {
-//     name: "Boilded Egg",
-//     price: 10,
-//     text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.",
-//     image: "/images/egg.png",
-//     type: "breakfast"
-//     },
-//   ];
-  
+const searchFood= (e)=>{
+  const searchValue= e.target.value;
+  console.log(searchValue);
+
+  if(searchValue === ""){
+    setFilterData(null);
+  }
+
+  const filter = data?.filter((food)=>
+    food.name.toLowerCase().includes(searchValue.toLowerCase()));
+  setFilterData(filter);
+}
+
+const filterFood =(type)=>{
+if(type ==="all"){
+  setFilterData(data);
+  setSelectedBtn("all");
+  return;
+}
+const filter = data?.filter((food)=>
+  food.type.toLowerCase().includes(type.toLowerCase()));
+setFilterData(filter);
+setSelectedBtn(type);
+};
+
+
 
 if(error) return <div>{error}</div>
 if(loading) return <div>{loading}</div>
 
   return (
-    <Container>
+    <>
+  <Container>
       <TopContainer>
         <div className="logo">
-          <img src="item_ (4).png" alt="logo" />
+          <img src="/logo.png" alt="logo" />
         </div>
 
         <div className="search">
-          <input placeholder="Search Food" />
+          <input onChange = {searchFood} placeholder="Search Food" />
         </div>
       </TopContainer>
       <FilterContainer>
-        <Button>All</Button>
-        <Button>Breakfast</Button>
-        <Button>Lunch</Button>
-        <Button>Dinner</Button>
+        <Button onClick={()=>filterFood("all")}>All</Button>
+        <Button onClick={()=>filterFood("Breakfast")}>Breakfast</Button>
+        <Button onClick={()=>filterFood("Lunch")}>Lunch</Button>
+        <Button onClick={()=>filterFood("Dinner")}> Dinner</Button>
       </FilterContainer>
 
-     <SearchResult data = {data} />
-    </Container>
+      </Container>
+  
+    <SearchResult data = {filterData} />
+    </>
   );
 };
-
 export default App;
 
-const Container = styled.div`
+export const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
 `;
@@ -100,7 +120,7 @@ const FilterContainer = styled.section`
 `;
 
 
-const Button = styled.button`
+export const Button = styled.button`
   background: #ff4343;
   border-radius: 5px;
   padding: 6px 12px;
