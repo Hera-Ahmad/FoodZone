@@ -55,6 +55,25 @@ setFilterData(filter);
 setSelectedBtn(type);
 };
 
+const filterBtns=[
+  {
+    name:"All",
+    type:"all",
+  },
+  {
+    name:"Breakfast",
+    type:"Breakfast",
+  },
+  {
+    name:"Lunch",
+    type:"Lunch",
+  },
+  {
+    name:"Dinner",
+    type:"Dinner",
+  },
+];
+
 
 
 if(error) return <div>{error}</div>
@@ -73,10 +92,12 @@ if(loading) return <div>{loading}</div>
         </div>
       </TopContainer>
       <FilterContainer>
-        <Button onClick={()=>filterFood("all")}>All</Button>
-        <Button onClick={()=>filterFood("Breakfast")}>Breakfast</Button>
-        <Button onClick={()=>filterFood("Lunch")}>Lunch</Button>
-        <Button onClick={()=>filterFood("Dinner")}> Dinner</Button>
+{
+  filterBtns.map((value)=>(
+  <Button isSelected={selectedBtn===value.type} key= {value.name} onClick={()=>filterFood(value.type)}>{value.name}</Button>))
+}
+
+        
       </FilterContainer>
 
       </Container>
@@ -93,7 +114,7 @@ export const Container = styled.div`
 `;
 
 const TopContainer = styled.section`
-  min-height: 140px;
+  height: 140px;
   display: flex;
   justify-content: space-between;
   padding: 16px;
@@ -108,7 +129,15 @@ const TopContainer = styled.section`
       height: 40px;
       font-size: 16px;
       padding: 0 10px;
+      &::placeholder{
+        color: white;
+      }
     }
+  }
+
+  @media  ( 0 < width < 600px ){
+    flex-direction:column;
+    height: 80px;
   }
 `;
 
@@ -121,7 +150,8 @@ const FilterContainer = styled.section`
 
 
 export const Button = styled.button`
-  background: #ff4343;
+  background: ${({isSelected})=> (isSelected?"#f22f2f":"#ff4343")} ;
+  outline: 1px solid  ${({isSelected})=> (isSelected?"white":"#ff4343")} ;
   border-radius: 5px;
   padding: 6px 12px;
   border: none;
